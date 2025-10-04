@@ -1,7 +1,13 @@
-# ⚡ Laravel + Vue 3 + Vite + Inertia.js + Quasar Boilerplate
+# DIPR- Event Detailment System
 
-A modern and powerful Laravel starter template featuring:
+## About this project
 
+The DIPR (Department of Information and Public Relations) Event Detailment System 
+is designed to streamline the assignment of employees to various roles during 
+official events and functions. This project establishes a structured approach to manage
+event staffing based on employee designations and event requirements.
+
+### Tech Specification
 - 🚀 **Laravel** for robust backend development  
 - 🌐 **Vue 3** as the reactive frontend framework  
 - ⚡ **Vite** for lightning-fast frontend bundling  
@@ -12,13 +18,12 @@ A modern and powerful Laravel starter template featuring:
 
 ## 📦 Features
 
-- 🔧 Laravel 10+ with Authentication
-- 🧠 Vue 3 with Composition API
-- 🌀 Inertia.js for SPA-like performance
-- 💨 Tailwind CSS (optional)
-- 🪄 Quasar components for beautiful UI
-- 🎯 Vite for instant hot-module reload
-- 🧪 Pre-configured for fast development
+- Improved event coordination and staff management
+- Enhanced coverage of departmental events
+- Clear accountability for different aspects of event execution
+- Efficient resource allocation based on event needs
+- Streamlined communication between event organizers and assigned staff
+
 
 ---
 
@@ -42,15 +47,5 @@ A modern and powerful Laravel starter template featuring:
     npm run build
 
 
----
 
-## 📦 More Useful Packages
-
-### 1. Install Laravel API/Sanctum
-    php artisan install:api
-
-### 2. Install Laravel Spatie-Roles and Permissions
-     composer require spatie/laravel-permission
-
----
 
