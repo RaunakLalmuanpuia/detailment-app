@@ -1,3 +1,73 @@
 @import "tailwindcss";
 
+*{
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
+}
+.text-btn-primary {
+    color: #ffffff !important;
+}
+.bg-btn-primary {
+    background: #191c51 !important;
+}
+.sized-btn{
+    min-width: 140px;
+}
+.text-no-underline{
+    text-decoration: none;
+}
 
+@media (max-width: 599px) {
+    .container{
+        padding: 8px;
+    }
+}
+@media (max-width: 1024px) {
+    .container {
+        max-width: 900px;
+        margin-right: auto;
+        margin-left: auto;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+@media (max-width:1439px) {
+    .container {
+        max-width: 1100px;
+        margin-right: auto;
+        margin-left: auto;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+
+@media (max-width: 3919px) {
+    .container {
+        max-width: 1250px;
+        margin-right: auto;
+        margin-left: auto;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+@media print {
+    .container{
+        position: absolute;
+        top: 12px;
+        width: 100%;
+    }
+}
+
+
+.card {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 16px;
+    border: 1px solid lightgray;
+    border-radius: 16px;
+}
+
+.card p:last-child {
+    margin-bottom: 0;
+}
