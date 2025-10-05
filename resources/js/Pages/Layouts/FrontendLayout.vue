@@ -1,5 +1,5 @@
 <template>
-    <q-layout @scroll="handleScroll" style="background: #ffffff" view="hHh lpR fff">
+    <q-layout @scroll="handleScroll" style="background: #ffffff" view="hHh lpR fff" >
 
         <!-- Header -->
         <q-header height-hint="90" :class="classObject" elevated class="bg-primary">
@@ -8,7 +8,7 @@
                 <!-- Logo / Title -->
                 <div class="row items-center">
                     <q-img name="event" size="32px" width="60px" class="q-mr-sm" src="/assets/Dipr_logo.png" />
-                    <span class="text-h6">Function Detailment</span>
+                    <span class="text-h6"></span>
                 </div>
 
                 <!-- Desktop Nav -->
@@ -52,7 +52,7 @@
         </q-page-container>
 
         <!-- Footer -->
-        <q-footer class="bg-dark text-white q-pt-xl q-pb-md">
+        <q-footer class="bg-negative text-white q-pt-xl q-pb-md">
             <div class="row q-col-gutter-xl q-px-lg">
                 <div class="col-12 col-md-3">
                     <div class="text-h6 text-weight-bold q-mb-sm">DIPR Staffing</div>

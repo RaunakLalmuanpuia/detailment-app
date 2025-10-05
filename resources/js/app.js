@@ -16,8 +16,10 @@ import {ZiggyVue} from "../../vendor/tightenco/ziggy/dist"
 import { Dialog, Loading, Notify, Quasar } from "quasar";
 
 
+const appName = import.meta.env.VITE_APP_NAME || 'DIPR';
 
 createInertiaApp({
+    title: (title) => `${appName}`,
     resolve: name => {
         const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
         return pages[`./Pages/${name}.vue`]
