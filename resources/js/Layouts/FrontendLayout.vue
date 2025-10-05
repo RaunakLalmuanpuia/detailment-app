@@ -16,7 +16,7 @@
                     <q-btn flat label="Home" to="/dashboard" class="text-primary" />
                     <q-btn flat label="Events" to="/events" class="text-primary" />
                     <q-btn v-if="!$page.props.auth?.user" flat label="Login" @click="$inertia.get(route('login'))" class="text-primary" />
-                    <q-btn v-if="$page.props.auth?.user" flat label="Logout" to="/reports" class="text-primary" />
+                    <q-btn v-if="$page.props.auth?.user" flat label="Logout"  class="text-primary" @click.prevent="$inertia.delete(route('login.destroy'))"/>
                 </div>
 
 

@@ -1,6 +1,6 @@
 <template>
     <q-page class="container"  padding>
-        <h3>Dashboard</h3>
+        <h3 class="text-primary">Dashboard</h3>
     </q-page>
 
 </template>

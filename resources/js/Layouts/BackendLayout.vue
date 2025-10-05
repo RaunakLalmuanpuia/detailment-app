@@ -13,67 +13,92 @@
 
                 <!-- Desktop Nav -->
                 <div class="row items-center gt-sm">
-                    <q-btn flat label="Dashboard" to="/dashboard" class="text-primary" />
-                    <q-btn flat label="Events" to="/events" class="text-primary" />
 
-                    <!-- Assignments Dropdown -->
-                    <q-btn-dropdown flat label="Assignments" class="text-primary">
-                        <q-list>
-                            <q-item clickable v-ripple to="/assignments">
-                                <q-item-section>All Assignments</q-item-section>
-                            </q-item>
-                            <q-item clickable v-ripple to="/assignments/pending">
-                                <q-item-section>Pending Assignments</q-item-section>
-                            </q-item>
-                            <q-item clickable v-ripple to="/assignments/completed">
-                                <q-item-section>Completed Assignments</q-item-section>
-                            </q-item>
-                            <q-item clickable v-ripple to="/assignments/create">
-                                <q-item-section>Create Assignment</q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-btn-dropdown>
+                    <!-- Admin Navigation -->
+                    <template v-if="isAdmin">
+                        <q-btn flat label="Dashboard" to="/dashboard" class="text-primary"/>
+                        <q-btn flat label="Users" to="/users" class="text-primary"/>
+                        <q-btn flat label="Events" to="/events" class="text-primary"/>
+                        <q-btn flat label="Reports" to="/reports" class="text-primary"/>
+                        <q-btn flat label="Logout" class="text-primary"
+                               @click.prevent="$inertia.delete(route('login.destroy'))"/>
+                    </template>
 
-                    <q-btn flat label="Staff" to="/employees" class="text-primary" />
-                    <q-btn flat label="Reports" to="/reports" class="text-primary" />
-                    <q-btn  flat label="Logout" class="text-primary" @click.prevent="$inertia.delete(route('login.destroy'))" />
+                    <!-- Organizer Navigation -->
+                    <template v-else-if="isOrganizer">
+                        <q-btn flat label="Dashboard" to="/dashboard" class="text-primary"/>
+                        <q-btn flat label="My Events" to="/events/mine" class="text-primary"/>
+                        <q-btn-dropdown flat label="Assignments" class="text-primary">
+                            <q-list>
+                                <q-item clickable v-ripple to="/assignments">
+                                    <q-item-section>All Assignments</q-item-section>
+                                </q-item>
+                                <q-item clickable v-ripple to="/assignments/pending">
+                                    <q-item-section>Pending Assignments</q-item-section>
+                                </q-item>
+                                <q-item clickable v-ripple to="/assignments/completed">
+                                    <q-item-section>Completed Assignments</q-item-section>
+                                </q-item>
+                            </q-list>
+                        </q-btn-dropdown>
+                        <q-btn flat label="Logout" class="text-primary"
+                               @click.prevent="$inertia.delete(route('login.destroy'))"/>
+                    </template>
+
+                    <!-- Employee Navigation -->
+                    <template v-else-if="isEmployee">
+                        <q-btn flat label="Dashboard" to="/dashboard" class="text-primary"/>
+                        <q-btn flat label="Assignments" to="/assignments" class="text-primary"/>
+                        <q-btn flat label="My Profile" to="/profile" class="text-primary"/>
+                        <q-btn flat label="Logout" class="text-primary"
+                               @click.prevent="$inertia.delete(route('login.destroy'))"/>
+                    </template>
+
+                    <!-- Viewer / Default Navigation -->
+                    <template v-else>
+                        <q-btn flat label="Dashboard" to="/dashboard" class="text-primary"/>
+                        <q-btn flat label="Events" to="/events" class="text-primary"/>
+                        <q-btn flat label="Logout" class="text-primary"
+                               @click.prevent="$inertia.delete(route('login.destroy'))"/>
+                    </template>
+
                 </div>
-
 
                 <!-- Mobile Menu Button -->
                 <div class="lt-md">
                     <q-btn dense flat round icon="menu">
                         <q-menu anchor="bottom right" self="top right">
                             <q-list style="min-width: 180px">
-                                <q-item clickable v-close-popup to="/dashboard">
-                                    <q-item-section>Dashboard</q-item-section>
-                                </q-item>
-                                <q-item clickable v-close-popup to="/events">
-                                    <q-item-section>Events</q-item-section>
-                                </q-item>
+                                <!-- Use same role logic for mobile -->
+                                <template v-if="isAdmin">
+                                    <q-item clickable v-close-popup to="/dashboard"><q-item-section>Dashboard</q-item-section></q-item>
+                                    <q-item clickable v-close-popup to="/users"><q-item-section>Users</q-item-section></q-item>
+                                    <q-item clickable v-close-popup to="/events"><q-item-section>Events</q-item-section></q-item>
+                                    <q-item clickable v-close-popup to="/reports"><q-item-section>Reports</q-item-section></q-item>
+                                </template>
 
-                                <!-- Assignment submenu inside mobile -->
-                                <q-expansion-item icon="assignment" label="Assignments" expand-separator>
-                                    <q-item clickable v-close-popup to="/assignments">
-                                        <q-item-section>All Assignments</q-item-section>
-                                    </q-item>
-                                    <q-item clickable v-close-popup to="/assignments/pending">
-                                        <q-item-section>Pending</q-item-section>
-                                    </q-item>
-                                    <q-item clickable v-close-popup to="/assignments/completed">
-                                        <q-item-section>Completed</q-item-section>
-                                    </q-item>
-                                    <q-item clickable v-close-popup to="/assignments/create">
-                                        <q-item-section>Create</q-item-section>
-                                    </q-item>
-                                </q-expansion-item>
+                                <template v-else-if="isOrganizer">
+                                    <q-item clickable v-close-popup to="/dashboard"><q-item-section>Dashboard</q-item-section></q-item>
+                                    <q-item clickable v-close-popup to="/events/mine"><q-item-section>My Events</q-item-section></q-item>
+                                    <q-expansion-item icon="assignment" label="Assignments" expand-separator>
+                                        <q-item clickable v-close-popup to="/assignments"><q-item-section>All Assignments</q-item-section></q-item>
+                                        <q-item clickable v-close-popup to="/assignments/pending"><q-item-section>Pending</q-item-section></q-item>
+                                        <q-item clickable v-close-popup to="/assignments/completed"><q-item-section>Completed</q-item-section></q-item>
+                                    </q-expansion-item>
+                                </template>
 
-                                <q-item clickable v-close-popup to="/employees">
-                                    <q-item-section>Staff</q-item-section>
-                                </q-item>
-                                <q-item clickable v-close-popup to="/reports">
-                                    <q-item-section>Reports</q-item-section>
-                                </q-item>
+                                <template v-else-if="isEmployee">
+                                    <q-item clickable v-close-popup to="/dashboard"><q-item-section>Dashboard</q-item-section></q-item>
+                                    <q-item clickable v-close-popup to="/assignments"><q-item-section>Assignments</q-item-section></q-item>
+                                    <q-item clickable v-close-popup to="/profile"><q-item-section>My Profile</q-item-section></q-item>
+                                </template>
+
+                                <template v-else>
+                                    <q-item clickable v-close-popup to="/dashboard"><q-item-section>Dashboard</q-item-section></q-item>
+                                    <q-item clickable v-close-popup to="/events"><q-item-section>Events</q-item-section></q-item>
+                                </template>
+
+                                <!-- Logout button for all -->
                                 <q-item clickable v-close-popup @click.prevent="$inertia.delete(route('login.destroy'))">
                                     <q-item-section>Logout</q-item-section>
                                 </q-item>
@@ -91,7 +116,7 @@
         </q-page-container>
 
         <!-- Footer -->
-        <q-footer class="bg-negative text-dark q-pt-xl q-pb-md">
+        <q-footer class="bg-negative text-dark q-pt-md q-pb-md">
             <div class="text-center text-dark q-mt-sm">
                 © {{ new Date().getFullYear() }} DIPR Event Staffing System. All rights reserved.
             </div>
@@ -102,7 +127,7 @@
 
 <script setup>
 import { computed, reactive } from "vue";
-
+import {usePage, router} from "@inertiajs/vue3";
 const state = reactive({
     isTop: true,
 });
@@ -118,26 +143,13 @@ const handleScroll = (detail) => {
     state.isTop = position < 10;
 };
 
-const menuItems = [
-    { label: "Dashboard", to: "/dashboard" },
-    { label: "Events", to: "/events" },
-    { label: "Assignments", to: "/assignments" },
-    { label: "Staff", to: "/employees" },
-    { label: "Reports", to: "/reports" },
-];
+const isAdmin = computed(() => !!usePage().props.roles?.find(item => item === 'Admin'));
+const isOrganizer = computed(() => !!usePage().props.roles?.find(item => item === 'Organizer'));
 
-const quickLinks = [
-    { label: "Dashboard", to: "/dashboard" },
-    { label: "Events", to: "/events" },
-    { label: "Staff Directory", to: "/employees" },
-    { label: "Reports", to: "/reports" },
-];
+const isEmployee = computed(() => !!usePage().props.roles?.find(item => item === 'Employee'));
 
-const resources = [
-    { label: "Documentation", to: "#" },
-    { label: "Training", to: "#" },
-    { label: "Support", to: "#" },
-];
+const isViewer = computed(() => !!usePage().props.roles?.find(item => item === 'Viewer'));
+
 </script>
 
 <style scoped>
