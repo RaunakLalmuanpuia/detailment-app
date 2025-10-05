@@ -8,7 +8,7 @@
                 <!-- Logo / Title -->
                 <div class="row items-center">
                     <q-img name="event" size="32px" width="60px" class="q-mr-sm" src="/assets/Dipr_logo.png" />
-                    <span class="text-h6">Function Detailment</span>
+                    <span class="text-h6">DIPR</span>
                 </div>
 
                 <!-- Desktop Nav -->
@@ -36,6 +36,7 @@
 
                     <q-btn flat label="Staff" to="/employees" class="text-primary" />
                     <q-btn flat label="Reports" to="/reports" class="text-primary" />
+                    <q-btn  flat label="Logout" class="text-primary" @click.prevent="$inertia.delete(route('login.destroy'))" />
                 </div>
 
 
@@ -73,6 +74,9 @@
                                 <q-item clickable v-close-popup to="/reports">
                                     <q-item-section>Reports</q-item-section>
                                 </q-item>
+                                <q-item clickable v-close-popup @click.prevent="$inertia.delete(route('login.destroy'))">
+                                    <q-item-section>Logout</q-item-section>
+                                </q-item>
                             </q-list>
                         </q-menu>
                     </q-btn>
@@ -87,45 +91,8 @@
         </q-page-container>
 
         <!-- Footer -->
-        <q-footer class="bg-dark text-white q-pt-xl q-pb-md">
-            <div class="row q-col-gutter-xl q-px-lg">
-                <div class="col-12 col-md-3">
-                    <div class="text-h6 text-weight-bold q-mb-sm">DIPR Staffing</div>
-                    <div class="text-grey-5">
-                        Streamlining event staffing for government departments and public relations.
-                    </div>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <div class="text-subtitle2 text-weight-bold q-mb-sm">Quick Links</div>
-                    <q-list dense>
-                        <q-item v-for="l in quickLinks" :key="l.label" clickable :to="l.to">
-                            <q-item-section>{{ l.label }}</q-item-section>
-                        </q-item>
-                    </q-list>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <div class="text-subtitle2 text-weight-bold q-mb-sm">Resources</div>
-                    <q-list dense>
-                        <q-item v-for="r in resources" :key="r.label" clickable :to="r.to">
-                            <q-item-section>{{ r.label }}</q-item-section>
-                        </q-item>
-                    </q-list>
-                </div>
-
-                <div class="col-12 col-md-3">
-                    <div class="text-subtitle2 text-weight-bold q-mb-sm">Contact</div>
-                    <div class="text-grey-5">
-                        Department of Information<br />
-                        and Public Relations<br />
-                        Government Complex<br />
-                        <a href="mailto:contact@dipr.gov" class="text-white">contact@dipr.gov</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center text-grey-6 q-mt-xl">
+        <q-footer class="bg-negative text-dark q-pt-xl q-pb-md">
+            <div class="text-center text-dark q-mt-sm">
                 © {{ new Date().getFullYear() }} DIPR Event Staffing System. All rights reserved.
             </div>
         </q-footer>
