@@ -103,7 +103,7 @@
 </template>
 
 <script setup>
-import FrontendLayout from "./Layouts/FrontendLayout.vue";
+import FrontendLayout from "../Layouts/FrontendLayout.vue";
 
 defineOptions({layout:FrontendLayout})
 // Static content

@@ -13,9 +13,9 @@
 
                 <!-- Desktop Nav -->
                 <div class="row items-center gt-sm">
-                    <q-btn flat label="Dashboard" to="/dashboard" class="text-primary" />
+                    <q-btn flat label="Home" to="/dashboard" class="text-primary" />
                     <q-btn flat label="Events" to="/events" class="text-primary" />
-                    <q-btn v-if="!$page.props.auth?.user" flat label="Login" to="/reports" class="text-primary" />
+                    <q-btn v-if="!$page.props.auth?.user" flat label="Login" @click="$inertia.get(route('login'))" class="text-primary" />
                     <q-btn v-if="$page.props.auth?.user" flat label="Logout" to="/reports" class="text-primary" />
                 </div>
 
@@ -32,7 +32,7 @@
                                     <q-item-section>Events</q-item-section>
                                 </q-item>
 
-                                <q-item v-if="!$page.props.auth?.user" clickable v-close-popup to="/employees">
+                                <q-item v-if="!$page.props.auth?.user" clickable v-close-popup @click="$inertia.get(route('login'))">
                                     <q-item-section>Login</q-item-section>
                                 </q-item>
                                 <q-item v-if="$page.props.auth?.user" clickable v-close-popup to="/reports">
