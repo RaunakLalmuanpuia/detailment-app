@@ -18,7 +18,7 @@
                     <template v-if="isAdmin">
                         <q-btn flat label="Dashboard" to="/dashboard" class="text-primary"/>
                         <q-btn flat label="Users" to="/users" class="text-primary"/>
-                        <q-btn flat label="Events" to="/events" class="text-primary"/>
+                        <q-btn flat label="Events" @click="$inertia.get(route('events.index'))" class="text-primary"/>
                         <q-btn flat label="Reports" to="/reports" class="text-primary"/>
                         <q-btn flat label="Logout" class="text-primary"
                                @click.prevent="$inertia.delete(route('login.destroy'))"/>

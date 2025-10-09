@@ -5,6 +5,9 @@ use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 
+use App\Http\Controllers\EventController;
+
+
 Route::get('/', function () {
     return Inertia::render('Home');
 });
@@ -26,4 +29,10 @@ Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function () {
 //    Route::get('admin',[DashboardController::class,'admin'])->name('dashboard.admin');
 //    Route::get('manager',[DashboardController::class,'manager'])->name('dashboard.manager');
 //    Route::get('stats/office', [DashboardController::class, 'officeStatistics'])->name('dashboard.office-statistics');
+});
+
+//Events Controller
+Route::group(['middleware' => 'auth', 'prefix' => 'events'], function () {
+    Route::get('index',[EventController::class,'index'])->name('events.index');
+
 });

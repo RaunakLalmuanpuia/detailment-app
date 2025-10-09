@@ -23,6 +23,7 @@
         "@quasar/extras": "^1.17.0",
         "@vitejs/plugin-vue": "^5.2.4",
         "quasar": "^2.18.1",
-        "vue": "^3.5.16"
+        "vue": "^3.5.16",
+        "vue-cal": "^4.10.2"
     }
 }
