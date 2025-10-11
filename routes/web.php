@@ -34,5 +34,10 @@ Route::group(['middleware' => 'auth', 'prefix' => 'dashboard'], function () {
 //Events Controller
 Route::group(['middleware' => 'auth', 'prefix' => 'events'], function () {
     Route::get('index',[EventController::class,'index'])->name('events.index');
+    Route::get('json-available-employees', [EventController::class, 'availableEmployees'])->name('events.available-employees');
+    Route::post('store', [EventController::class, 'store'])->name('events.store');
+    Route::put('update/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::delete('/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+
 
 });
