@@ -12,12 +12,11 @@ use App\Models\EventGuest;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class MasterSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // ----------------------
@@ -55,83 +54,82 @@ class MasterSeeder extends Seeder
         }
 
         // ----------------------
-        // 3. Employees (with linked users)
+        // 3. Employees (5 per designation)
         // ----------------------
-        $employees = [
-            ['name' => 'Alice Sharma', 'designation' => 'Office Representative', 'contact_info' => 'alice@example.com'],
-            ['name' => 'Ravi Kumar', 'designation' => 'Press Officer', 'contact_info' => 'ravi@example.com'],
-            ['name' => 'Neha Singh', 'designation' => 'Videographer', 'contact_info' => 'neha@example.com'],
-            ['name' => 'Amit Patel', 'designation' => 'Photographer', 'contact_info' => 'amit@example.com'],
-            ['name' => 'Sunita Rao', 'designation' => 'Sound Technician', 'contact_info' => 'sunita@example.com'],
-            ['name' => 'Vikram Joshi', 'designation' => 'Driver', 'contact_info' => 'vikram@example.com'],
-            ['name' => 'Meena Iyer', 'designation' => 'Archivist', 'contact_info' => 'meena@example.com'],
-        ];
-
-        foreach ($employees as $emp) {
-            $designation = Designation::where('title', $emp['designation'])->first();
+        foreach ($designations as $designationData) {
+            $designation = Designation::where('title', $designationData['title'])->first();
             if (! $designation) continue;
 
-            $user = User::firstOrCreate(
-                ['email' => $emp['contact_info']],
-                [
-                    'name' => $emp['name'],
-                    'mobile' => fake()->unique()->numerify('##########'),
-                    'password' => Hash::make('password'),
-                ]
-            );
-            if (! $user->hasRole('Employee')) $user->assignRole('Employee');
+            for ($i = 1; $i <= 5; $i++) {
+                $name = "{$designation->title} {$i}";
+                $email = strtolower(str_replace(' ', '_', $designation->title)) . "_{$i}@example.com";
 
-            Employee::firstOrCreate(
-                ['user_id' => $user->id],
-                [
-                    'name' => $emp['name'],
-                    'designation_id' => $designation->id,
-                    'contact_info' => $emp['contact_info'],
-                    'status' => 'active',
-                ]
-            );
+                $user = User::firstOrCreate(
+                    ['email' => $email],
+                    [
+                        'name' => $name,
+                        'mobile' => fake()->unique()->numerify('9#########'),
+                        'password' => Hash::make('password'),
+                    ]
+                );
+
+                if (! $user->hasRole('Employee')) {
+                    $user->assignRole('Employee');
+                }
+
+                Employee::firstOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'name' => $name,
+                        'designation_id' => $designation->id,
+                        'contact_info' => $email,
+                        'status' => 'active',
+                    ]
+                );
+            }
         }
 
         // ----------------------
-        // 4. Events (4 events around October 2025)
+        // 4. Events (10 events, with overlaps)
         // ----------------------
-        $events = [
-            ['title'=>'Cultural Fest', 'date'=>'2025-10-05','start_time'=>'10:00:00','end_time'=>'14:00:00','location'=>'Main Hall','status'=>'upcoming'],
-            ['title'=>'Science Exhibition', 'date'=>'2025-10-12','start_time'=>'09:00:00','end_time'=>'16:00:00','location'=>'Exhibition Ground','status'=>'upcoming'],
-            ['title'=>'Annual Sports Day', 'date'=>'2025-10-20','start_time'=>'08:30:00','end_time'=>'17:00:00','location'=>'Sports Ground','status'=>'upcoming'],
-            ['title'=>'Teachers Day Celebration', 'date'=>'2025-10-31','start_time'=>'11:00:00','end_time'=>'13:30:00','location'=>'Auditorium','status'=>'upcoming'],
-        ];
+        $baseDate = Carbon::create(2025, 10, 5);
+        $events = [];
+
+        for ($i = 1; $i <= 10; $i++) {
+            // Create overlapping pattern (every 2nd event overlaps previous)
+            $date = $baseDate->copy()->addDays(($i % 2 === 0) ? $i - 2 : $i - 1);
+            $start = Carbon::createFromTime(9 + ($i % 3), 0);
+            $end = $start->copy()->addHours(4);
+
+            $events[] = [
+                'title' => "Event {$i}",
+                'date' => $date->toDateString(),
+                'start_time' => $start->format('H:i:s'),
+                'end_time' => $end->format('H:i:s'),
+                'location' => "Venue " . Str::random(3),
+                'status' => 'upcoming',
+            ];
+        }
 
         foreach ($events as $event) {
             Event::firstOrCreate(['title' => $event['title']], $event);
         }
 
         // ----------------------
-        // 5. Event Guests (1 chief guest or chairman per event)
+        // 5. Event Guests
         // ----------------------
-        $eventGuests = [
-            'Cultural Fest' => [
-                ['role'=>'chief_guest','name'=>'Dr. Arjun Malhotra','designation'=>'Scientist','organization'=>'Research Institute','contact'=>'arjun@example.com']
-            ],
-            'Science Exhibition' => [
-                ['role'=>'chairman','name'=>'Ms. Leena Kapoor','designation'=>'Director','organization'=>'Science Board','contact'=>'leena@example.com']
-            ],
-            'Annual Sports Day' => [
-                ['role'=>'chief_guest','name'=>'Mr. Rajesh Singh','designation'=>'Sports Officer','organization'=>'Sports Authority','contact'=>'rajesh@example.com']
-            ],
-            'Teachers Day Celebration' => [
-                ['role'=>'chairman','name'=>'Dr. Meera Nair','designation'=>'Principal','organization'=>'High School','contact'=>'meera@example.com']
-            ],
-        ];
-
-        foreach ($eventGuests as $eventTitle => $guests) {
-            $event = Event::firstWhere('title', $eventTitle);
-            foreach ($guests as $guest) {
-                EventGuest::firstOrCreate(
-                    ['event_id'=>$event->id, 'role'=>$guest['role'], 'name'=>$guest['name']],
-                    $guest
-                );
-            }
+        $eventTitles = Event::pluck('title');
+        foreach ($eventTitles as $title) {
+            $event = Event::firstWhere('title', $title);
+            EventGuest::firstOrCreate(
+                ['event_id' => $event->id, 'role' => 'chief_guest'],
+                [
+                    'name' => fake()->name(),
+                    'designation' => fake()->jobTitle(),
+                    'organization' => fake()->company(),
+                    'contact' => fake()->unique()->safeEmail(),
+                ]
+            );
         }
 
         // ----------------------
@@ -150,19 +148,37 @@ class MasterSeeder extends Seeder
         }
 
         // ----------------------
-        // 7. Event Assignments
+        // 7. Event Assignments (avoid conflicts)
         // ----------------------
-        $eventDuties = EventDuty::all();
-        $employees   = Employee::all();
+        $employees = Employee::with('designation')->get();
+        $eventDuties = EventDuty::with(['event', 'duty'])->get();
 
         foreach ($eventDuties as $eventDuty) {
-            $emp = $employees->firstWhere(fn($e) => $e->designation->duty_type === $eventDuty->duty->name);
-            if ($emp) {
-                EventAssignment::firstOrCreate(
-                    ['event_duty_id'=>$eventDuty->id,'employee_id'=>$emp->id],
-                    ['status'=>'assigned']
-                );
+            $eligibleEmployees = $employees->filter(function ($emp) use ($eventDuty) {
+                return $emp->designation->duty_type === $eventDuty->duty->name;
+            });
+
+            foreach ($eligibleEmployees as $emp) {
+                // Check if employee already assigned to overlapping event
+                $hasConflict = EventAssignment::where('employee_id', $emp->id)
+                    ->whereHas('eventDuty.event', function ($q) use ($eventDuty) {
+                        $q->where('date', $eventDuty->event->date)
+                            ->where(function ($q2) use ($eventDuty) {
+                                $q2->whereBetween('start_time', [$eventDuty->event->start_time, $eventDuty->event->end_time])
+                                    ->orWhereBetween('end_time', [$eventDuty->event->start_time, $eventDuty->event->end_time]);
+                            });
+                    })
+                    ->exists();
+
+                if (! $hasConflict) {
+                    EventAssignment::firstOrCreate(
+                        ['event_duty_id' => $eventDuty->id, 'employee_id' => $emp->id],
+                        ['status' => 'assigned']
+                    );
+                    break; // assign only one per event-duty
+                }
             }
         }
+
     }
 }

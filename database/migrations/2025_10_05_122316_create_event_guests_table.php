@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('event_guests', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Event::class);
-            $table->enum('role', ['chief_guest', 'chairman', 'guest']);
+            $table->string('role');
             $table->string('name');
             $table->string('designation')->nullable();
             $table->string('organization')->nullable();
