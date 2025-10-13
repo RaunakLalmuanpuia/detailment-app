@@ -6,10 +6,10 @@
         <section class="bg-gradient text-white text-center q-py-xl q-px-md">
             <div class="q-mx-auto" style="max-width: 800px;">
                 <div class="text-h4 text-weight-bold q-mb-md">
-                    Streamline Your Event Staffing
+                    Streamline Your Event Detailment
                 </div>
                 <div class="text-subtitle1 q-mb-xl">
-                    Efficiently assign roles and manage personnel for government events with our comprehensive staffing solution.
+                    Efficiently assign roles and manage personnel for government events.
                 </div>
                 <div class="row justify-center q-gutter-sm">
                     <q-btn color="white" text-color="primary" label="Create New Event" to="/create-event" glossy />

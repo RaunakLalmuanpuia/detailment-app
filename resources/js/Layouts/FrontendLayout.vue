@@ -55,9 +55,9 @@
         <q-footer class="bg-negative text-white q-pt-xl q-pb-md">
             <div class="row q-col-gutter-xl q-px-lg">
                 <div class="col-12 col-md-3">
-                    <div class="text-h6 text-weight-bold q-mb-sm">DIPR Staffing</div>
+                    <div class="text-h6 text-weight-bold q-mb-sm">DIPR Detailment</div>
                     <div class="text-grey-5">
-                        Streamlining event staffing for government departments and public relations.
+                        Streamlining event detailment for government departments and public relations.
                     </div>
                 </div>
 
@@ -91,7 +91,7 @@
             </div>
 
             <div class="text-center text-grey-6 q-mt-xl">
-                © {{ new Date().getFullYear() }} DIPR Event Staffing System. All rights reserved.
+                © {{ new Date().getFullYear() }} DIPR Event Detailment System. All rights reserved.
             </div>
         </q-footer>
 

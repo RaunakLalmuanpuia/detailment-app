@@ -118,7 +118,7 @@
         <!-- Footer -->
         <q-footer class="bg-negative text-dark q-pt-md q-pb-md">
             <div class="text-center text-dark q-mt-sm">
-                © {{ new Date().getFullYear() }} DIPR Event Staffing System. All rights reserved.
+                © {{ new Date().getFullYear() }} DIPR Event Detailment System. All rights reserved.
             </div>
         </q-footer>
 
