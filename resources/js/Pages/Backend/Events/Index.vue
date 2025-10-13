@@ -308,7 +308,7 @@
 
 <script setup>
 import BackendLayout from '../../../Layouts/BackendLayout.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { router,useForm } from '@inertiajs/vue3'
 import { useQuasar } from 'quasar'
 
@@ -459,4 +459,50 @@ const confirmDelete = (event) => {
 // Helpers
 const formatDate = (date) => date ? new Date(date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ''
 const getStatusColor = (status) => ({ upcoming: 'primary', completed: 'positive', cancelled: 'negative' })[status] || 'grey'
+
+// CREATE FORM WATCHER (no event_id needed)
+watch(
+    () => [createForm.date, createForm.start_time, createForm.end_time],
+    async ([date, start, end]) => {
+        if (!date || !start || !end) return
+        try {
+            const { data } = await axios.post(route('events.available-employees'), {
+                date,
+                start_time: start,
+                end_time: end,
+            })
+            createForm.assignments.forEach(assignment => {
+                assignment.availableEmployees = data.filter(emp =>
+                    (emp.designation?.duty_type || '').toLowerCase() === assignment.duty.name.toLowerCase()
+                )
+            })
+        } catch (error) {
+            console.error('Failed to fetch available employees', error)
+        }
+    }
+)
+
+// EDIT FORM WATCHER (pass event_id)
+watch(
+    () => [editForm.date, editForm.start_time, editForm.end_time],
+    async ([date, start, end]) => {
+        if (!date || !start || !end) return
+        try {
+            const { data } = await axios.post(route('events.available-employees'), {
+                date,
+                start_time: start,
+                end_time: end,
+                event_id: editForm.id, // pass current event id
+            })
+            editForm.assignments.forEach(assignment => {
+                assignment.availableEmployees = data.filter(emp =>
+                    (emp.designation?.duty_type || '').toLowerCase() === assignment.duty.name.toLowerCase()
+                )
+            })
+        } catch (error) {
+            console.error('Failed to fetch available employees', error)
+        }
+    }
+)
+
 </script>

@@ -92,12 +92,25 @@ class MasterSeeder extends Seeder
         // ----------------------
         // 4. Events (10 events, with overlaps)
         // ----------------------
-        $baseDate = Carbon::create(2025, 10, 5);
+
+        $baseDate = Carbon::create(2025, 10, 5); // Starting in October 2025
         $events = [];
 
         for ($i = 1; $i <= 10; $i++) {
+            // Spread events across October, November, and December
+            // Each set of ~3–4 events per month
+            $month = match(true) {
+                $i <= 3 => 10, // October
+                $i <= 6 => 11, // November
+                default => 12, // December
+            };
+
+            $baseDate = Carbon::create(2025, $month, 5);
+
             // Create overlapping pattern (every 2nd event overlaps previous)
             $date = $baseDate->copy()->addDays(($i % 2 === 0) ? $i - 2 : $i - 1);
+
+            // Randomize time slightly (9–11 AM start, 4-hour duration)
             $start = Carbon::createFromTime(9 + ($i % 3), 0);
             $end = $start->copy()->addHours(4);
 
@@ -106,7 +119,7 @@ class MasterSeeder extends Seeder
                 'date' => $date->toDateString(),
                 'start_time' => $start->format('H:i:s'),
                 'end_time' => $end->format('H:i:s'),
-                'location' => "Venue " . Str::random(3),
+                'location' => "Venue " . Str::upper(Str::random(3)),
                 'status' => 'upcoming',
             ];
         }
@@ -114,6 +127,7 @@ class MasterSeeder extends Seeder
         foreach ($events as $event) {
             Event::firstOrCreate(['title' => $event['title']], $event);
         }
+
 
         // ----------------------
         // 5. Event Guests
