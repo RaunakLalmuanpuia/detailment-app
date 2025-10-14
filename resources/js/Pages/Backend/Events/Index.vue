@@ -1,306 +1,378 @@
 <template>
     <q-page class="container q-py-lg">
-
         <!-- Header -->
-        <div class="row items-center justify-between q-mb-md">
-            <div class="text-h5 text-weight-bold text-primary">Events Overview</div>
-            <q-btn color="primary" label="Create Event" @click="openCreateDialog()" />
+        <div class="row items-center justify-between q-mb-lg">
+            <div class="text-h4 text-weight-bold text-primary">Event Management</div>
+            <q-btn color="primary" label="Create New Event" icon="add_circle" @click="openCreateDialog()" rounded />
         </div>
 
         <!-- Event List -->
-        <q-list bordered separator class="rounded-borders">
-            <q-item
-                v-for="event in props.events"
-                :key="event.id"
-                clickable
-                @click="openViewDialog(event)"
-            >
-                <q-item-section>
-                    <div class="text-weight-bold">{{ event.title }}</div>
-                    <div class="text-caption text-grey">
-                        {{ formatDate(event.date) }} | {{ event.location }}
-                    </div>
-                </q-item-section>
-
-                <q-item-section side>
-                    <q-chip
-                        :color="getStatusColor(event.status)"
-                        text-color="white"
-                        size="sm"
-                        class="text-capitalize"
+        <q-card class="shadow-1 rounded-borders q-mb-lg">
+            <q-card-section>
+                <div class="text-h6 text-weight-medium text-grey-8 q-mb-md">Upcoming & Past Events</div>
+                <q-list separator>
+                    <q-item
+                        v-for="event in props.events"
+                        :key="event.id"
+                        clickable
+                        @click="openViewDialog(event)"
+                        class="q-py-md"
                     >
-                        {{ event.status }}
-                    </q-chip>
-                </q-item-section>
+                        <q-item-section avatar>
+                            <q-icon name="event" color="primary" size="md" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label class="text-subtitle1 text-weight-bold text-grey-9">{{ event.title }}</q-item-label>
+                            <q-item-label caption class="text-grey-7">
+                                <q-icon name="calendar_today" size="xs" class="q-mr-xs" />{{ formatDate(event.date) }}
+                                <span class="q-mx-sm">|</span>
+                                <q-icon name="location_on" size="xs" class="q-mr-xs" />{{ event.location }}
+                            </q-item-label>
+                        </q-item-section>
 
-                <q-item-section side>
-                    <q-btn dense flat icon="edit" color="primary" @click.stop="openEditDialog(event)" />
-                    <q-btn dense flat icon="delete" color="negative" @click.stop="confirmDelete(event)" />
-                </q-item-section>
-            </q-item>
-        </q-list>
+
+
+                        <q-item-section side>
+                            <div class="q-gutter-xs">
+                                <q-btn dense flat icon="edit" color="primary" @click.stop="openEditDialog(event)" round>
+                                    <q-tooltip>Edit Event</q-tooltip>
+                                </q-btn>
+                                <q-btn dense flat icon="delete" color="negative" @click.stop="confirmDelete(event)" round>
+                                    <q-tooltip>Delete Event</q-tooltip>
+                                </q-btn>
+                            </div>
+                        </q-item-section>
+                    </q-item>
+                </q-list>
+                <q-card-section v-if="!props.events || props.events.length === 0" class="text-center text-grey-6">
+                    No events found. Click "Create New Event" to add one!
+                </q-card-section>
+            </q-card-section>
+        </q-card>
 
         <!-- CREATE EVENT DIALOG -->
-        <q-dialog v-model="createDialog">
-            <q-card style="min-width: 800px">
-                <q-card-section class="text-h6 text-weight-bold text-primary">
-                    Create New Event
+        <q-dialog v-model="createDialog" persistent>
+            <q-card class="event-dialog-card">
+                <q-card-section class="bg-primary text-white row items-center">
+                    <div class="text-h6 text-weight-bold">Create New Event</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup color="white" />
                 </q-card-section>
                 <q-separator />
-                <q-card-section>
+                <q-card-section class="q-pa-md">
                     <q-form @submit.prevent="submitCreate">
-
-                        <!-- BASIC INFO -->
-                        <div class="row q-col-gutter-md">
-                            <div class="col-6">
-                                <q-input v-model="createForm.title" label="Event Title" outlined dense />
-                            </div>
-                            <div class="col-6">
-                                <q-input v-model="createForm.location" label="Location" outlined dense />
-                            </div>
-                            <div class="col-4">
-                                <q-input v-model="createForm.date" type="date" label="Date" outlined dense />
-                            </div>
-                            <div class="col-4">
-                                <q-input v-model="createForm.start_time" type="time" label="Start Time" outlined dense />
-                            </div>
-                            <div class="col-4">
-                                <q-input v-model="createForm.end_time" type="time" label="End Time" outlined dense />
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Basic Event Information</div>
+                        <div class="row q-col-gutter-md q-mb-md">
+                            <div class="col-12 ">
+                                <q-input v-model="createForm.title" label="Event Title" outlined dense hide-bottom-space :rules="[val => !!val || 'Title is required']" />
                             </div>
                             <div class="col-12">
+                                <q-input v-model="createForm.location" label="Location" outlined dense hide-bottom-space :rules="[val => !!val || 'Location is required']" />
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <q-input v-model="createForm.date" type="date" label="Date" outlined dense hide-bottom-space :rules="[val => !!val || 'Date is required']" />
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <q-input v-model="createForm.start_time" type="time" label="Start Time" outlined dense hide-bottom-space :rules="[val => !!val || 'Start time is required']" />
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <q-input v-model="createForm.end_time" type="time" label="End Time" outlined dense hide-bottom-space :rules="[val => !!val || 'End time is required']" />
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <q-select
                                     v-model="createForm.status"
                                     label="Status"
                                     :options="['upcoming', 'completed', 'cancelled']"
                                     outlined
                                     dense
+                                    hide-bottom-space
+                                    :rules="[val => !!val || 'Status is required']"
                                 />
                             </div>
                         </div>
 
-                        <!-- GUESTS -->
-                        <div class="q-mt-md">
-                            <div class="text-subtitle1 text-weight-bold q-mb-sm text-primary">Guests</div>
-                            <div v-for="(guest, i) in createForm.guests" :key="i" class="q-mb-sm row q-col-gutter-md">
-                                <div class="col-3"><q-input v-model="guest.role" label="Role" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.name" label="Name" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.designation" label="Designation" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.organization" label="Organization" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.contact" label="Contact" outlined dense /></div>
-                                <div class="col-auto flex items-center">
-                                    <q-btn dense flat icon="delete" color="negative" @click="removeCreateGuest(i)" />
+                        <q-separator class="q-my-md" />
+
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Guests Details</div>
+                        <q-card flat bordered class="q-mb-md">
+                            <q-card-section>
+                                <div v-for="(guest, i) in createForm.guests" :key="i" class="row q-col-gutter-sm q-mb-sm">
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.role" label="Role" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.name" label="Name" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.designation" label="Designation" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.organization" label="Organization" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-7">
+                                        <q-input v-model="guest.contact" label="Contact" outlined dense type="email" />
+                                    </div>
+                                    <div class="col-12 col-sm-auto flex items-center justify-center">
+                                        <q-btn dense flat icon="delete" color="negative" @click="removeCreateGuest(i)" round>
+                                            <q-tooltip>Remove Guest</q-tooltip>
+                                        </q-btn>
+                                    </div>
                                 </div>
-                            </div>
-                            <q-btn dense flat icon="add" color="primary" label="Add Guest" @click="addCreateGuest" />
-                        </div>
+                                <q-btn outline color="primary" icon="person_add" label="Add Guest" @click="addCreateGuest" class="q-mt-sm" />
+                            </q-card-section>
+                        </q-card>
 
-                        <!-- DUTIES -->
-                        <div class="q-mt-lg">
-                            <div class="text-subtitle1 text-weight-bold q-mb-sm text-primary">Duty Assignments</div>
-                            <div
-                                v-for="(dutyAssign, dIndex) in createForm.assignments"
-                                :key="dutyAssign.duty.id"
-                                class="q-pa-md q-mb-md bg-grey-2 rounded-borders"
-                            >
-                                <div class="text-weight-bold text-primary text-lg q-mb-sm">{{ dutyAssign.duty.name }}</div>
+                        <q-separator class="q-my-md" />
 
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Duty Assignments</div>
+                        <q-card flat bordered class="q-mb-md">
+                            <q-card-section>
                                 <div
-                                    v-for="(emp, eIndex) in dutyAssign.employees"
-                                    :key="eIndex"
-                                    class="row q-col-gutter-md q-mb-sm"
+                                    v-for="(dutyAssign, dIndex) in createForm.assignments"
+                                    :key="dutyAssign.duty.id"
+                                    class="q-pa-md q-mb-sm bg-grey-1 rounded-borders"
                                 >
-                                    <div class="col-10">
-                                        <q-select
-                                            v-model="emp.employee_id"
-                                            label="Select Employee"
-                                            :options="dutyAssign.availableEmployees"
-                                            option-value="id"
-                                            option-label="name"
-                                            outlined
-                                            dense
-                                            emit-value
-                                            map-options
-                                        />
+                                    <div class="text-weight-bold text-primary text-md q-mb-sm">{{ dutyAssign.duty.name }}</div>
+
+                                    <div
+                                        v-for="(emp, eIndex) in dutyAssign.employees"
+                                        :key="eIndex"
+                                        class="row q-col-gutter-sm q-mb-sm items-center"
+                                    >
+                                        <div class="col-10">
+                                            <q-select
+                                                v-model="emp.employee_id"
+                                                label="Select Employee"
+                                                :options="dutyAssign.availableEmployees"
+                                                option-value="id"
+                                                option-label="name"
+                                                outlined
+                                                dense
+                                                emit-value
+                                                map-options
+                                                clearable
+                                            />
+                                        </div>
+                                        <div class="col-auto flex items-center">
+                                            <q-btn dense flat icon="delete" color="negative" @click="removeCreateEmployee(dIndex, eIndex)" round>
+                                                <q-tooltip>Remove Employee</q-tooltip>
+                                            </q-btn>
+                                        </div>
                                     </div>
-                                    <div class="col-auto flex items-center">
-                                        <q-btn dense flat icon="delete" color="negative" @click="removeCreateEmployee(dIndex, eIndex)" />
-                                    </div>
+
+                                    <q-btn dense flat icon="add" color="primary" label="Add Employee to this Duty" @click="addCreateEmployee(dIndex)" class="q-mt-sm" />
                                 </div>
+                                <div v-if="!createForm.assignments || createForm.assignments.length === 0" class="text-grey-6 text-center q-py-md">
+                                    No duties defined for this event.
+                                </div>
+                            </q-card-section>
+                        </q-card>
 
-                                <q-btn dense flat icon="add" color="primary" label="Add Employee" @click="addCreateEmployee(dIndex)" />
-                            </div>
-                        </div>
-
-                        <!-- ACTIONS -->
-                        <q-card-actions align="right" class="q-mt-md">
-                            <q-btn flat label="Cancel" color="secondary" v-close-popup />
-                            <q-btn label="Create Event" color="primary" type="submit" />
+                        <q-card-actions align="right" class="q-mt-lg q-gutter-md">
+                            <q-btn flat label="Cancel" color="negative" v-close-popup />
+                            <q-btn label="Create Event" color="primary" type="submit" icon="check_circle" rounded />
                         </q-card-actions>
-
                     </q-form>
                 </q-card-section>
             </q-card>
         </q-dialog>
 
         <!-- EDIT EVENT DIALOG -->
-        <q-dialog v-model="editDialog">
-            <q-card style="min-width: 800px">
-                <q-card-section class="text-h6 text-weight-bold text-primary">
-                    Edit Event
+        <q-dialog v-model="editDialog" persistent>
+            <q-card class="event-dialog-card">
+                <q-card-section class="bg-primary text-white row items-center">
+                    <div class="text-h6 text-weight-bold">Edit Event</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup color="white" />
                 </q-card-section>
                 <q-separator />
-                <q-card-section>
+                <q-card-section class="q-pa-md">
                     <q-form @submit.prevent="submitEdit">
-
-                        <!-- BASIC INFO -->
-                        <div class="row q-col-gutter-md">
-                            <div class="col-6">
-                                <q-input v-model="editForm.title" label="Event Title" outlined dense />
-                            </div>
-                            <div class="col-6">
-                                <q-input v-model="editForm.location" label="Location" outlined dense />
-                            </div>
-                            <div class="col-4">
-                                <q-input v-model="editForm.date" type="date" label="Date" outlined dense />
-                            </div>
-                            <div class="col-4">
-                                <q-input v-model="editForm.start_time" type="time" label="Start Time" outlined dense />
-                            </div>
-                            <div class="col-4">
-                                <q-input v-model="editForm.end_time" type="time" label="End Time" outlined dense />
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Basic Event Information</div>
+                        <div class="row q-col-gutter-md q-mb-md">
+                            <div class="col-12 ">
+                                <q-input v-model="editForm.title" label="Event Title" outlined dense hide-bottom-space :rules="[val => !!val || 'Title is required']" />
                             </div>
                             <div class="col-12">
+                                <q-input v-model="editForm.location" label="Location" outlined dense hide-bottom-space :rules="[val => !!val || 'Location is required']" />
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <q-input v-model="editForm.date" type="date" label="Date" outlined dense hide-bottom-space :rules="[val => !!val || 'Date is required']" />
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <q-input v-model="editForm.start_time" type="time" label="Start Time" outlined dense hide-bottom-space :rules="[val => !!val || 'Start time is required']" />
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <q-input v-model="editForm.end_time" type="time" label="End Time" outlined dense hide-bottom-space :rules="[val => !!val || 'End time is required']" />
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <q-select
                                     v-model="editForm.status"
                                     label="Status"
                                     :options="['upcoming', 'completed', 'cancelled']"
                                     outlined
                                     dense
+                                    hide-bottom-space
+                                    :rules="[val => !!val || 'Status is required']"
                                 />
                             </div>
                         </div>
 
-                        <!-- GUESTS -->
-                        <div class="q-mt-md">
-                            <div class="text-subtitle1 text-weight-bold q-mb-sm text-primary">Guests</div>
-                            <div v-for="(guest, i) in editForm.guests" :key="i" class="q-mb-sm row q-col-gutter-md">
-                                <div class="col-3"><q-input v-model="guest.role" label="Role" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.name" label="Name" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.designation" label="Designation" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.organization" label="Organization" outlined dense /></div>
-                                <div class="col-3"><q-input v-model="guest.contact" label="Contact" outlined dense /></div>
-                                <div class="col-auto flex items-center">
-                                    <q-btn dense flat icon="delete" color="negative" @click="removeEditGuest(i)" />
+                        <q-separator class="q-my-md" />
+
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Guests Details</div>
+                        <q-card flat bordered class="q-mb-md">
+                            <q-card-section>
+                                <div v-for="(guest, i) in editForm.guests" :key="i" class="row q-col-gutter-sm q-mb-sm">
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.role" label="Role" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.name" label="Name" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.designation" label="Designation" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <q-input v-model="guest.organization" label="Organization" outlined dense />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-7">
+                                        <q-input v-model="guest.contact" label="Contact" outlined dense type="email" />
+                                    </div>
+                                    <div class="col-12 col-sm-auto flex items-center justify-center">
+                                        <q-btn dense flat icon="delete" color="negative" @click="removeEditGuest(i)" round>
+                                            <q-tooltip>Remove Guest</q-tooltip>
+                                        </q-btn>
+                                    </div>
                                 </div>
-                            </div>
-                            <q-btn dense flat icon="add" color="primary" label="Add Guest" @click="addEditGuest" />
-                        </div>
+                                <q-btn outline color="primary" icon="person_add" label="Add Guest" @click="addEditGuest" class="q-mt-sm" />
+                            </q-card-section>
+                        </q-card>
 
-                        <!-- DUTIES -->
-                        <div class="q-mt-lg">
-                            <div class="text-subtitle1 text-weight-bold q-mb-sm text-primary">Duty Assignments</div>
-                            <div
-                                v-for="(dutyAssign, dIndex) in editForm.assignments"
-                                :key="dutyAssign.duty.id"
-                                class="q-pa-md q-mb-md bg-grey-2 rounded-borders"
-                            >
-                                <div class="text-weight-bold text-primary text-lg q-mb-sm">{{ dutyAssign.duty.name }}</div>
+                        <q-separator class="q-my-md" />
 
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Duty Assignments</div>
+                        <q-card flat bordered class="q-mb-md">
+                            <q-card-section>
                                 <div
-                                    v-for="(emp, eIndex) in dutyAssign.employees"
-                                    :key="eIndex"
-                                    class="row q-col-gutter-md q-mb-sm"
+                                    v-for="(dutyAssign, dIndex) in editForm.assignments"
+                                    :key="dutyAssign.duty.id"
+                                    class="q-pa-md q-mb-sm bg-grey-1 rounded-borders"
                                 >
-                                    <div class="col-10">
-                                        <q-select
-                                            v-model="emp.employee_id"
-                                            label="Select Employee"
-                                            :options="dutyAssign.availableEmployees"
-                                            option-value="id"
-                                            option-label="name"
-                                            outlined
-                                            dense
-                                            emit-value
-                                            map-options
-                                        />
+                                    <div class="text-weight-bold text-primary text-md q-mb-sm">{{ dutyAssign.duty.name }}</div>
+
+                                    <div
+                                        v-for="(emp, eIndex) in dutyAssign.employees"
+                                        :key="eIndex"
+                                        class="row q-col-gutter-sm q-mb-sm items-center"
+                                    >
+                                        <div class="col-10">
+                                            <q-select
+                                                v-model="emp.employee_id"
+                                                label="Select Employee"
+                                                :options="dutyAssign.availableEmployees"
+                                                option-value="id"
+                                                option-label="name"
+                                                outlined
+                                                dense
+                                                emit-value
+                                                map-options
+                                                clearable
+                                            />
+                                        </div>
+                                        <div class="col-auto flex items-center">
+                                            <q-btn dense flat icon="delete" color="negative" @click="removeEditEmployee(dIndex, eIndex)" round>
+                                                <q-tooltip>Remove Employee</q-tooltip>
+                                            </q-btn>
+                                        </div>
                                     </div>
-                                    <div class="col-auto flex items-center">
-                                        <q-btn dense flat icon="delete" color="negative" @click="removeEditEmployee(dIndex, eIndex)" />
-                                    </div>
+
+                                    <q-btn dense flat icon="add" color="primary" label="Add Employee to this Duty" @click="addEditEmployee(dIndex)" class="q-mt-sm" />
                                 </div>
+                                <div v-if="!editForm.assignments || editForm.assignments.length === 0" class="text-grey-6 text-center q-py-md">
+                                    No duties defined for this event.
+                                </div>
+                            </q-card-section>
+                        </q-card>
 
-                                <q-btn dense flat icon="add" color="primary" label="Add Employee" @click="addEditEmployee(dIndex)" />
-                            </div>
-                        </div>
-
-                        <!-- ACTIONS -->
-                        <q-card-actions align="right" class="q-mt-md">
-                            <q-btn flat label="Cancel" color="secondary" v-close-popup />
-                            <q-btn label="Save Changes" color="primary" type="submit" />
+                        <q-card-actions align="right" class="q-mt-lg q-gutter-md">
+                            <q-btn flat label="Cancel" color="negative" v-close-popup />
+                            <q-btn label="Save Changes" color="primary" type="submit" icon="save" rounded />
                         </q-card-actions>
-
                     </q-form>
                 </q-card-section>
             </q-card>
         </q-dialog>
 
         <!-- VIEW EVENT DETAILS DIALOG -->
-        <q-dialog v-model="viewDialog">
-            <q-card style="min-width: 700px; max-width: 90vw;">
-                <q-card-section class="text-h6 text-weight-bold text-primary">{{ selectedEvent?.title }}</q-card-section>
+        <q-dialog v-model="viewDialog" persistent>
+            <q-card class="event-dialog-card">
+                <q-card-section class="bg-primary text-white row items-center">
+                    <div class="text-h6 text-weight-bold">{{ selectedEvent?.title }}</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup color="white" />
+                </q-card-section>
                 <q-separator />
-                <q-card-section>
+                <q-card-section class="q-pa-md">
                     <div class="q-mb-md">
-                        <div><b>Date:</b> {{ formatDate(selectedEvent?.date) }}</div>
-                        <div><b>Time:</b> {{ selectedEvent?.start_time }} - {{ selectedEvent?.end_time }}</div>
-                        <div><b>Location:</b> {{ selectedEvent?.location }}</div>
-                        <div><b>Status:</b>
-                            <q-chip :color="getStatusColor(selectedEvent?.status)" text-color="white" class="text-capitalize">
-                                {{ selectedEvent?.status }}
-                            </q-chip>
+                        <div class="row q-col-gutter-sm">
+                            <div class="col-12 col-md-6"><q-icon name="calendar_today" color="grey-7" size="sm" class="q-mr-xs" /><b>Date:</b> {{ formatDate(selectedEvent?.date) }}</div>
+                            <div class="col-12 col-md-6"><q-icon name="access_time" color="grey-7" size="sm" class="q-mr-xs" /><b>Time:</b> {{ selectedEvent?.start_time }} - {{ selectedEvent?.end_time }}</div>
+                            <div class="col-12 col-md-6"><q-icon name="location_on" color="grey-7" size="sm" class="q-mr-xs" /><b>Location:</b> {{ selectedEvent?.location }}</div>
+                            <div class="col-12 col-md-6"><q-icon name="info" color="grey-7" size="sm" class="q-mr-xs" /><b>Status:</b>
+                                <q-chip :color="getStatusColor(selectedEvent?.status)" text-color="white" class="text-capitalize" size="sm">
+                                    {{ selectedEvent?.status }}
+                                </q-chip>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- GUESTS SECTION - MODIFIED FOR SINGLE/FEW GUESTS -->
                     <div v-if="selectedEvent?.guests?.length">
-                        <div class="text-subtitle1 text-weight-bold q-mb-sm text-primary">Guests</div>
-                        <q-markup-table flat bordered>
-                            <thead>
-                            <tr>
-                                <th>Role</th>
-                                <th>Name</th>
-                                <th>Designation</th>
-                                <th>Organization</th>
-                                <th>Contact</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(guest, i) in selectedEvent.guests" :key="i">
-                                <td>{{ guest.role }}</td>
-                                <td>{{ guest.name }}</td>
-                                <td>{{ guest.designation }}</td>
-                                <td>{{ guest.organization }}</td>
-                                <td>{{ guest.contact }}</td>
-                            </tr>
-                            </tbody>
-                        </q-markup-table>
+                        <q-separator class="q-my-md" />
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Guests</div>
+                        <!-- Using a single card for all guests or a well-structured div -->
+                        <q-card flat bordered class="q-mb-md">
+                            <q-card-section v-for="(guest, i) in selectedEvent.guests" :key="i" :class="{'bg-grey-1': i % 2 === 1}">
+                                <div class="text-weight-bold text-primary q-mb-xs">{{ guest.name }} <span class="text-grey-7">- {{ guest.role }}</span></div>
+                                <div class="row q-col-gutter-sm">
+                                    <div class="col-12 col-sm-6 text-grey-8"><q-icon name="work" size="xs" class="q-mr-xs" />{{ guest.designation }}</div>
+                                    <div class="col-12 col-sm-6 text-grey-8"><q-icon name="apartment" size="xs" class="q-mr-xs" />{{ guest.organization }}</div>
+                                    <div class="col-12 col-sm-6 text-grey-8"><q-icon name="email" size="xs" class="q-mr-xs" />{{ guest.contact }}</div>
+                                </div>
+                                <q-separator v-if="i < selectedEvent.guests.length - 1" class="q-my-md" />
+                            </q-card-section>
+                        </q-card>
                     </div>
 
                     <div v-if="selectedEvent?.duties?.length" class="q-mt-md">
-                        <div class="text-subtitle1 text-weight-bold q-mb-sm text-primary">Duty Assignments</div>
-                        <div v-for="(duty, i) in selectedEvent.duties" :key="i" class="q-pa-sm bg-grey-2 rounded-borders q-mb-sm">
-                            <div class="text-weight-bold text-primary">{{ duty.name }}</div>
-                            <ul class="q-pl-md">
-                                <li v-for="emp in duty.employees" :key="emp.id">{{ emp.name }}</li>
-                            </ul>
+                        <q-separator class="q-my-md" />
+                        <div class="text-subtitle1 text-weight-bold text-primary q-mb-sm">Duty Assignments</div>
+                        <div class="row q-col-gutter-md">
+                            <div v-for="(duty, i) in selectedEvent.duties" :key="i" class="col-12 col-md-6">
+                                <q-card flat bordered class="q-mb-sm">
+                                    <q-card-section class="q-py-sm bg-grey-1">
+                                        <div class="text-weight-bold text-primary">{{ duty.name }}</div>
+                                    </q-card-section>
+                                    <q-card-section class="q-pt-sm">
+                                        <ul class="q-pl-md q-my-none">
+                                            <li v-for="emp in duty.employees" :key="emp.id" class="text-grey-8">{{ emp.name }}</li>
+                                            <li v-if="!duty.employees || duty.employees.length === 0" class="text-grey-6">No employees assigned</li>
+                                        </ul>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
                         </div>
                     </div>
-
                 </q-card-section>
-                <q-card-actions align="right">
-                    <q-btn flat label="Close" color="primary" v-close-popup />
+                <q-card-actions align="right" class="q-mt-md">
+                    <q-btn flat label="Close" color="primary" v-close-popup icon="close" />
                 </q-card-actions>
             </q-card>
         </q-dialog>
+
+        <!-- DELETE CONFIRMATION DIALOG (Optional, using Quasar Notify for simpler confirmation) -->
+        <!-- Consider using Quasar's QDialog.create() for a more integrated confirmation experience if preferred over a dedicated dialog component -->
 
     </q-page>
 </template>

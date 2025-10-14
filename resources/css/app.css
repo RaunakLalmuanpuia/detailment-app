@@ -104,3 +104,13 @@ body {
     margin-bottom: 0;
 }
 
+.active-menu {
+    font-family: Poppins, serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #f16c6c;
+    background-color: #eff3fb;
+    border-bottom: 3px solid #f16c6c;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+}

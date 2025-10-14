@@ -12,17 +12,61 @@
                 </div>
 
                 <!-- Desktop Nav -->
-                <div class="row items-center gt-sm">
+                <div class="row items-center gt-sm q-gutter-md">
 
                     <!-- Admin Navigation -->
                     <template v-if="isAdmin">
-                        <q-btn flat label="Dashboard" to="/dashboard" class="text-primary"/>
-                        <q-btn flat label="Users" to="/users" class="text-primary"/>
-                        <q-btn flat label="Events" @click="$inertia.get(route('events.index'))" class="text-primary"/>
-                        <q-btn flat label="Reports" to="/reports" class="text-primary"/>
-                        <q-btn flat label="Logout" class="text-primary"
-                               @click.prevent="$inertia.delete(route('login.destroy'))"/>
+                        <div class="row items-center q-gutter-md">
+                            <q-item clickable v-ripple to="/dashboard" class="text-primary">
+                                <q-item-section>Dashboard</q-item-section>
+                            </q-item>
+
+                            <q-item clickable v-ripple @click="$inertia.get(route('events.index'))"
+                                    :active="route().current()==='events.index'" active
+                                    active-class="active-menu text-primary"
+                                    class="text-primary">
+                                <q-item-section>Events</q-item-section>
+                            </q-item>
+
+                            <q-item clickable v-ripple @click="$inertia.get(route('events.index'))" class="text-primary">
+                                <q-item-section>Detailment</q-item-section>
+                            </q-item>
+
+                            <q-item clickable v-ripple class="text-primary relative-position">
+                                <q-item-section>Admin</q-item-section>
+                                <q-item-section side>
+                                    <q-icon name="expand_more" size="18px" color="primary"/>
+                                </q-item-section>
+
+                                <q-menu anchor="bottom middle" self="top middle">
+                                    <q-list style="min-width: 150px">
+                                        <q-item clickable v-ripple to="/assignments">
+                                            <q-item-section>Employees</q-item-section>
+                                        </q-item>
+                                        <q-item clickable v-ripple to="/assignments/pending">
+                                            <q-item-section>Users</q-item-section>
+                                        </q-item>
+                                        <q-item clickable v-ripple to="/assignments/completed">
+                                            <q-item-section>Reports</q-item-section>
+                                        </q-item>
+                                    </q-list>
+                                </q-menu>
+                            </q-item>
+
+                            <q-item clickable v-ripple to="/reports" class="text-primary">
+                                <q-item-section>Reports</q-item-section>
+                            </q-item>
+
+                            <q-item clickable v-ripple @click.prevent="$inertia.delete(route('login.destroy'))" class="text-primary">
+                                <q-item-section>Logout</q-item-section>
+                                <q-item-section avatar>
+                                    <q-icon name="logout" color="primary" />
+                                </q-item-section>
+                            </q-item>
+                        </div>
                     </template>
+
+
 
                     <!-- Organizer Navigation -->
                     <template v-else-if="isOrganizer">
