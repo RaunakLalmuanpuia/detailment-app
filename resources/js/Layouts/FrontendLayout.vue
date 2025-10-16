@@ -1,41 +1,81 @@
 <template>
-    <q-layout @scroll="handleScroll" style="background: #ffffff" view="hHh lpR fff" >
+    <q-layout @scroll="handleScroll" style="background: #ffffff" view="hHh lpR fff">
 
         <!-- Header -->
         <q-header height-hint="90" :class="classObject" elevated class="bg-primary">
-            <q-toolbar class="q-px-lg q-py-md justify-between">
+            <q-toolbar class="q-my-md">
 
-                <!-- Logo / Title -->
+                <!-- Left Side: Logo & Menu -->
                 <div class="row items-center">
-                    <q-img name="event" size="32px" width="60px" class="q-mr-sm" src="/assets/Dipr_logo.png" />
-                    <span class="text-h6"></span>
+                    <q-btn flat round dense icon="menu" class="q-mr-sm lt-md" />
+                    <q-separator dark vertical inset class="lt-md" />
+
+                    <q-img src="/assets/Dipr_logo.png" width="60px" class="q-mx-sm" />
+                    <span class="text-h6 text-weight-bold">DIPR Portal</span>
                 </div>
 
-                <!-- Desktop Nav -->
+                <!-- Push nav items to right -->
+                <q-space />
+
+                <!-- Desktop Navigation (Right Side) -->
                 <div class="row items-center gt-sm">
-                    <q-btn flat label="Home" to="/dashboard" class="text-primary" />
-                    <q-btn flat label="Events" to="/events" class="text-primary" />
-                    <q-btn v-if="!$page.props.auth?.user" flat label="Login" @click="$inertia.get(route('login'))" class="text-primary" />
-                    <q-btn v-if="$page.props.auth?.user" flat label="Logout"  class="text-primary" @click.prevent="$inertia.delete(route('login.destroy'))"/>
+                    <q-btn stretch flat label="Home"
+                           @click="$inertia.get(route('home'))"
+                           :class="{ 'bg-primary text-white': route().current() === 'home' }"
+                    />
+                    <q-separator dark vertical />
+                    <q-btn stretch flat label="Events" to="/events" />
+
+                    <template v-if="!$page.props.auth?.user">
+                        <q-separator dark vertical />
+                        <q-btn
+                            stretch
+                            flat
+                            label="Login"
+                            @click="$inertia.get(route('login'))"
+                            :class="{ 'bg-primary text-white': route().current() === 'login' }"
+                        />
+                    </template>
+
+                    <template v-else>
+                        <q-separator dark vertical />
+                        <q-btn
+                            stretch
+                            flat
+                            label="Logout"
+                            @click.prevent="$inertia.delete(route('login.destroy'))"
+                        />
+                    </template>
                 </div>
 
-
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Menu (Right-aligned) -->
                 <div class="lt-md">
-                    <q-btn dense flat round icon="menu">
+                    <q-btn flat round dense icon="menu">
                         <q-menu anchor="bottom right" self="top right">
                             <q-list style="min-width: 180px">
                                 <q-item clickable v-close-popup to="/dashboard">
-                                    <q-item-section>Dashboard</q-item-section>
+                                    <q-item-section>Home</q-item-section>
                                 </q-item>
+
                                 <q-item clickable v-close-popup to="/events">
                                     <q-item-section>Events</q-item-section>
                                 </q-item>
 
-                                <q-item v-if="!$page.props.auth?.user" clickable v-close-popup @click="$inertia.get(route('login'))">
+                                <q-item
+                                    v-if="!$page.props.auth?.user"
+                                    clickable
+                                    v-close-popup
+                                    @click="$inertia.get(route('login'))"
+                                >
                                     <q-item-section>Login</q-item-section>
                                 </q-item>
-                                <q-item v-if="$page.props.auth?.user" clickable v-close-popup to="/reports">
+
+                                <q-item
+                                    v-if="$page.props.auth?.user"
+                                    clickable
+                                    v-close-popup
+                                    @click.prevent="$inertia.delete(route('login.destroy'))"
+                                >
                                     <q-item-section>Logout</q-item-section>
                                 </q-item>
                             </q-list>
@@ -44,6 +84,8 @@
                 </div>
 
             </q-toolbar>
+
+
         </q-header>
 
         <!-- Page Content -->
@@ -116,14 +158,6 @@ const handleScroll = (detail) => {
     state.isTop = position < 10;
 };
 
-const menuItems = [
-    { label: "Dashboard", to: "/dashboard" },
-    { label: "Events", to: "/events" },
-    { label: "Assignments", to: "/assignments" },
-    { label: "Staff", to: "/employees" },
-    { label: "Reports", to: "/reports" },
-];
-
 const quickLinks = [
     { label: "Dashboard", to: "/dashboard" },
     { label: "Events", to: "/events" },
@@ -141,5 +175,8 @@ const resources = [
 <style scoped>
 .shadow-bottom-5 {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+.no-padding {
+    padding: 0 !important;
 }
 </style>

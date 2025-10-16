@@ -10,7 +10,7 @@ use App\Http\Controllers\EventController;
 
 Route::get('/', function () {
     return Inertia::render('Home');
-});
+})->name('home');
 
 
 //Auth Controller
@@ -38,6 +38,5 @@ Route::group(['middleware' => 'auth', 'prefix' => 'events'], function () {
     Route::post('store', [EventController::class, 'store'])->name('events.store');
     Route::put('update/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/{event}', [EventController::class, 'destroy'])->name('events.destroy');
-
 
 });
